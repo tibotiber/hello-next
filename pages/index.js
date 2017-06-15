@@ -2,31 +2,61 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Link from 'next/link'
 import Layout from '../components/Layout'
-import withLayout from '../utils/withLayout'
 
-const { string } = PropTypes
+function getPosts () {
+  return [
+    { id: 'hello-nextjs', title: 'Hello Next.js' },
+    { id: 'learn-nextjs', title: 'Learn Next.js is awesome' },
+    { id: 'deploy-nextjs', title: 'Deploy apps with ZEIT' }
+  ]
+}
 
-const PostLink = props => (
+const { shape, string } = PropTypes
+
+const PostLink = ({ post }) => (
   <li>
-    <Link as={`/p/${props.id}`} href={`/post?title=${props.title}`}>
-      <a>{props.title}</a>
+    <Link as={`/p/${post.id}`} href={`/post?title=${post.title}`}>
+      <a>{post.title}</a>
     </Link>
+    <style jsx>{`
+      li {
+        list-style: none;
+        margin: 5px 0;
+      }
+      a {
+        text-decoration: none;
+        color: blue;
+        font-family: "Arial";
+      }
+      a:hover {
+        opacity: 0.6;
+      }
+    `}</style>
   </li>
 )
 
 PostLink.propTypes = {
-  title: string
+  post: shape({
+    id: string,
+    title: string
+  })
 }
 
 const Index = () => (
-  <div>
+  <Layout>
     <h1>My Blog</h1>
     <ul>
-      <PostLink id='hello-nextjs' title='Hello Next.js' />
-      <PostLink id='learn-nextjs' title='Learn Next.js is awesome' />
-      <PostLink id='deploy-nextjs' title='Deploy apps with Zeit' />
+      {getPosts().map(post => <PostLink key={post.id} post={post} />)}
     </ul>
-  </div>
+    <style jsx>{`
+      h1, a {
+        font-family: "Arial";
+      }
+      ul {
+        padding: 0;
+      }
+    `}</style>
+  </Layout>
 )
 
-export default withLayout(Layout)(Index)
+export default Index
