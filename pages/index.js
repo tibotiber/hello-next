@@ -1,62 +1,41 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import fetch from 'isomorphic-unfetch'
 import Link from 'next/link'
 import Layout from '../components/Layout'
 
-function getPosts () {
-  return [
-    { id: 'hello-nextjs', title: 'Hello Next.js' },
-    { id: 'learn-nextjs', title: 'Learn Next.js is awesome' },
-    { id: 'deploy-nextjs', title: 'Deploy apps with ZEIT' }
-  ]
-}
+const { string, arrayOf, shape } = PropTypes
 
-const { shape, string } = PropTypes
-
-const PostLink = ({ post }) => (
-  <li>
-    <Link as={`/p/${post.id}`} href={`/post?title=${post.title}`}>
-      <a>{post.title}</a>
-    </Link>
-    <style jsx>{`
-      li {
-        list-style: none;
-        margin: 5px 0;
-      }
-      a {
-        text-decoration: none;
-        color: blue;
-        font-family: "Arial";
-      }
-      a:hover {
-        opacity: 0.6;
-      }
-    `}</style>
-  </li>
-)
-
-PostLink.propTypes = {
-  post: shape({
-    id: string,
-    title: string
-  })
-}
-
-const Index = () => (
+const Index = ({ shows }) => (
   <Layout>
-    <h1>My Blog</h1>
+    <h1>Batman TV Shows</h1>
     <ul>
-      {getPosts().map(post => <PostLink key={post.id} post={post} />)}
+      {shows.map(({ show }) => (
+        <li key={show.id}>
+          <Link as={`/p/${show.id}`} href={`/post?id=${show.id}`}>
+            <a>{show.name}</a>
+          </Link>
+        </li>
+      ))}
     </ul>
-    <style jsx>{`
-      h1, a {
-        font-family: "Arial";
-      }
-      ul {
-        padding: 0;
-      }
-    `}</style>
   </Layout>
 )
+
+Index.propTypes = {
+  shows: arrayOf(
+    shape({
+      id: string,
+      name: string
+    })
+  )
+}
+
+Index.getInitialProps = async ({ req }) => {
+  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
+  const data = await res.json()
+  return {
+    shows: data
+  }
+}
 
 export default Index
