@@ -1,7 +1,10 @@
 import React from 'react'
 import Layout from '../components/Layout'
-import withLayout from '../utils/withLayout'
 
-const About = () => <p>This is the about page</p>
+const About = () => (
+  <Layout>
+    <p>This is the about page</p>
+  </Layout>
+)
 
-export default withLayout(Layout)(About)
+export default About
