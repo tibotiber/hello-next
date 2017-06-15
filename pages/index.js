@@ -1,41 +1,32 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import fetch from 'isomorphic-unfetch'
 import Link from 'next/link'
 import Layout from '../components/Layout'
+import withLayout from '../utils/withLayout'
 
-const { string, arrayOf, shape } = PropTypes
+const { string } = PropTypes
 
-const Index = ({ shows }) => (
-  <Layout>
-    <h1>Batman TV Shows</h1>
-    <ul>
-      {shows.map(({ show }) => (
-        <li key={show.id}>
-          <Link as={`/p/${show.id}`} href={`/post?id=${show.id}`}>
-            <a>{show.name}</a>
-          </Link>
-        </li>
-      ))}
-    </ul>
-  </Layout>
+const PostLink = props => (
+  <li>
+    <Link as={`/p/${props.id}`} href={`/post?title=${props.title}`}>
+      <a>{props.title}</a>
+    </Link>
+  </li>
 )
 
-Index.propTypes = {
-  shows: arrayOf(
-    shape({
-      id: string,
-      name: string
-    })
-  )
+PostLink.propTypes = {
+  title: string
 }
 
-Index.getInitialProps = async ({ req }) => {
-  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
-  const data = await res.json()
-  return {
-    shows: data
-  }
-}
+const Index = () => (
+  <div>
+    <h1>My Blog</h1>
+    <ul>
+      <PostLink id='hello-nextjs' title='Hello Next.js' />
+      <PostLink id='learn-nextjs' title='Learn Next.js is awesome' />
+      <PostLink id='deploy-nextjs' title='Deploy apps with Zeit' />
+    </ul>
+  </div>
+)
 
-export default Index
+export default withLayout(Layout)(Index)
